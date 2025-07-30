@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ماشین‌حساب سود و زیان پرواربندی دام و طیور</title>
+
+  <style>
+    body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-section {
+            background-color: #ffe6e6; /* قرمز بسیار روشن */
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            border: 1px solid #ffb3b3;
+        }
+        .form-section h3 {
+            color: #dc3545;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: right;
+            border-bottom: 1px dashed #ff8080;
+            padding-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"],
+        select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            text-align: left; /* برای نمایش بهتر اعداد */
+            direction: ltr; /* برای نمایش بهتر اعداد */
+        }
+        button {
+            background-color: #dc3545; /* قرمز */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #bd2130;
+        }
+        .results, .suggestions {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .results p, .suggestions p, .suggestions ul {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            text-align: justify;
+        }
+        .results strong {
+            color: #0056b3;
+        }
+        .suggestions strong {
+            color: #dc3545;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+            text-align: justify;
+        }
+        .profit {
+            color: #28a745; /* سبز برای سود */
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .loss {
+            color: #dc3545; /* قرمز برای زیان */
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+  </style>
+
+  
+</head>
+<body>
+  <div class="container">
+        <h1>ماشین‌حساب سود و زیان پرواربندی دام و طیور</h1>
+
+        <form id="profitLossCalculatorForm">
+            <div class="form-section">
+                <h3>الف) اطلاعات کلی پروژه</h3>
+                <div class="form-group">
+                    <label for="animalType">نوع دام/طیور پرواربندی:</label>
+                    <select id="animalType" name="animalType" required>
+                        <option value="">انتخاب کنید...</option>
+                        <option value="beef_cattle">گاو گوشتی</option>
+                        <option value="sheep_lamb">گوسفند/بره</option>
+                        <option value="broiler">جوجه گوشتی</option>
+                        <option value="other">سایر</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="numAnimals">تعداد رأس دام/طیور:</label>
+                    <input type="number" id="numAnimals" name="numAnimals" min="1" placeholder="مثال: 100" required>
+                </div>
+                <div class="form-group">
+                    <label for="initialWeight">وزن اولیه هر رأس (کیلوگرم):</label>
+                    <input type="number" id="initialWeight" name="initialWeight" step="0.1" min="0" placeholder="مثال: 200" required>
+                </div>
+                <div class="form-group">
+                    <label for="finalWeight">وزن هدف نهایی هر رأس (کیلوگرم):</label>
+                    <input type="number" id="finalWeight" name="finalWeight" step="0.1" min="0" placeholder="مثال: 400" required>
+                    <p class="note">این وزن پس از پایان دوره پرواربندی است.</p>
+                </div>
+                <div class="form-group">
+                    <label for="mortalityRate">درصد تلفات مورد انتظار (%):</label>
+                    <input type="number" id="mortalityRate" name="mortalityRate" step="0.1" min="0" max="100" placeholder="مثال: 2 (دو درصد)">
+                </div>
+                <div class="form-group">
+                    <label for="durationDays">مدت زمان دوره پرواربندی (روز):</label>
+                    <input type="number" id="durationDays" name="durationDays" min="1" placeholder="مثال: 120" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>ب) هزینه‌ها</h3>
+                <div class="form-group">
+                    <label for="purchasePricePerKg">قیمت خرید هر کیلوگرم دام/طیور زنده (ریال/تومان):</label>
+                    <input type="number" id="purchasePricePerKg" name="purchasePricePerKg" step="0.1" min="0" placeholder="مثال: 100,000" required>
+                </div>
+                <div class="form-group">
+                    <label for="feedCostTotal">هزینه کل خوراک در دوره (ریال/تومان):</label>
+                    <input type="number" id="feedCostTotal" name="feedCostTotal" min="0" placeholder="مثال: 250,000,000" required>
+                    <p class="note">این مبلغ را می‌توانید از **ماشین‌حساب محاسبه خوراک دام و طیور** (قبلی) به دست آورید.</p>
+                </div>
+                <div class="form-group">
+                    <label for="vetMedCost">هزینه دامپزشکی و دارو (ریال/تومان):</label>
+                    <input type="number" id="vetMedCost" name="vetMedCost" min="0" placeholder="مثال: 10,000,000">
+                </div>
+                <div class="form-group">
+                    <label for="laborCost">هزینه نیروی انسانی (ریال/تومان):</label>
+                    <input type="number" id="laborCost" name="laborCost" min="0" placeholder="مثال: 20,000,000">
+                </div>
+                <div class="form-group">
+                    <label for="housingEquipCost">هزینه نگهداری، آب، برق، گاز و استهلاک تجهیزات (ریال/تومان):</label>
+                    <input type="number" id="housingEquipCost" name="housingEquipCost" min="0" placeholder="مثال: 15,000,000">
+                </div>
+                <div class="form-group">
+                    <label for="transportationCost">هزینه حمل و نقل (خرید و فروش) (ریال/تومان):</label>
+                    <input type="number" id="transportationCost" name="transportationCost" min="0" placeholder="مثال: 5,000,000">
+                </div>
+                <div class="form-group">
+                    <label for="otherCosts">سایر هزینه‌های متفرقه (ریال/تومان):</label>
+                    <input type="number" id="otherCosts" name="otherCosts" min="0" placeholder="مثال: 3,000,000">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>ج) درآمد</h3>
+                <div class="form-group">
+                    <label for="salePricePerKg">قیمت فروش مورد انتظار هر کیلوگرم دام/طیور زنده (ریال/تومان):</label>
+                    <input type="number" id="salePricePerKg" name="salePricePerKg" step="0.1" min="0" placeholder="مثال: 180,000" required>
+                </div>
+            </div>
+
+            <button type="submit">محاسبه سود و زیان</button>
+        </form>
+
+        <div class="results" id="profitLossResults">
+            <h2>نتایج برآورد اقتصادی پروژه پرواربندی</h2>
+            <p><strong>نوع دام/طیور:</strong> <span id="displayAnimalType">--</span></p>
+            <p><strong>تعداد اولیه:</strong> <span id="displayNumAnimals">--</span> رأس</p>
+            <p><strong>مدت پرواربندی:</strong> <span id="displayDurationDays">--</span> روز</p>
+            <hr>
+            <p><strong>وزن کل خرید:</strong> <span id="totalInitialWeight">--</span> کیلوگرم</p>
+            <p><strong>هزینه کل خرید دام/طیور:</strong> <span id="totalPurchaseCost">--</span> ریال/تومان</p>
+            <hr>
+            <p><strong>تعداد دام/طیور در پایان دوره (پس از تلفات):</strong> <span id="finalNumAnimals">--</span> رأس</p>
+            <p><strong>وزن کل فروش:</strong> <span id="totalFinalWeight">--</span> کیلوگرم</p>
+            <p><strong>کل درآمد از فروش:</strong> <span id="totalSaleRevenue">--</span> ریال/تومان</p>
+            <hr>
+            <p><strong>جمع کل هزینه‌ها:</strong> <span id="totalProjectCost">--</span> ریال/تومان</p>
+            <hr>
+            <p><strong>سود/زیان خالص پروژه:</strong> <span id="netProfitLoss">--</span></p>
+            <p class="note">این محاسبات تخمینی هستند و باید با دقت و بر اساس داده‌های واقعی مزرعه شما به‌روزرسانی شوند. نوسانات بازار، بیماری‌ها، آفات و عوامل پیش‌بینی نشده می‌توانند بر سودآوری تأثیر بگذارند.</p>
+        </div>
+
+        <div class="suggestions" id="financialSuggestions">
+            <h2>توضیحات و پیشنهادات بهبود سودآوری</h2>
+            <h3>عوامل کلیدی در سودآوری پرواربندی:</h3>
+            <ul>
+                <li>**نسبت تبدیل خوراک (FCR):** کارایی تبدیل خوراک به وزن گوشت. هرچه FCR کمتر باشد، بهتر است.</li>
+                <li>**افزایش وزن روزانه (ADG):** سرعت رشد دام/طیور. رشد سریع‌تر به معنای دوره پرواربندی کوتاه‌تر و هزینه‌های کمتر است.</li>
+                <li>**قیمت‌های بازار:** نوسانات قیمت خرید و فروش دام/طیور و قیمت خوراک تأثیر زیادی دارد.</li>
+            </ul>
+
+            <h3>پیشنهادات برای افزایش سودآوری:</h3>
+            <ul>
+                <li>**انتخاب نژاد مناسب:** انتخاب نژادهایی با پتانسیل رشد بالا و FCR خوب.</li>
+                <li>**جیره غذایی بهینه:** استفاده از جیره‌های متعادل و اقتصادی متناسب با سن و مرحله رشد.</li>
+                <li>**مدیریت بهداشتی:** اجرای برنامه واکسیناسیون و پیشگیری از بیماری‌ها برای کاهش تلفات و هزینه‌های درمانی.</li>
+                <li>**کاهش استرس:** فراهم آوردن محیط راحت و بدون استرس (دما، تهویه، فضای کافی).</li>
+                <li>**خرید و فروش هوشمندانه:** پایش بازار برای خرید در قیمت مناسب و فروش در اوج قیمت.</li>
+            </ul>
+        </div>
+    </div>
+
+  <script>
+    document.getElementById('profitLossCalculatorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // گرفتن مقادیر ورودی
+            const animalType = document.getElementById('animalType').options[document.getElementById('animalType').selectedIndex].text;
+            const numAnimals = parseFloat(document.getElementById('numAnimals').value);
+            const initialWeight = parseFloat(document.getElementById('initialWeight').value);
+            const finalWeight = parseFloat(document.getElementById('finalWeight').value);
+            const mortalityRate = parseFloat(document.getElementById('mortalityRate').value) || 0; // default to 0 if empty
+            const durationDays = parseFloat(document.getElementById('durationDays').value);
+
+            const purchasePricePerKg = parseFloat(document.getElementById('purchasePricePerKg').value);
+            const feedCostTotal = parseFloat(document.getElementById('feedCostTotal').value);
+            const vetMedCost = parseFloat(document.getElementById('vetMedCost').value) || 0;
+            const laborCost = parseFloat(document.getElementById('laborCost').value) || 0;
+            const housingEquipCost = parseFloat(document.getElementById('housingEquipCost').value) || 0;
+            const transportationCost = parseFloat(document.getElementById('transportationCost').value) || 0;
+            const otherCosts = parseFloat(document.getElementById('otherCosts').value) || 0;
+
+            const salePricePerKg = parseFloat(document.getElementById('salePricePerKg').value);
+
+            // اعتبارسنجی اولیه
+            if (isNaN(numAnimals) || isNaN(initialWeight) || isNaN(finalWeight) || isNaN(durationDays) ||
+                isNaN(purchasePricePerKg) || isNaN(feedCostTotal) || isNaN(salePricePerKg) ||
+                numAnimals <= 0 || initialWeight <= 0 || finalWeight <= 0 || durationDays <= 0 ||
+                purchasePricePerKg < 0 || feedCostTotal < 0 || salePricePerKg < 0 || finalWeight <= initialWeight) {
+                alert('لطفاً تمامی فیلدهای ضروری را با مقادیر عددی معتبر پر کنید. (وزن نهایی باید بیشتر از وزن اولیه باشد).');
+                return;
+            }
+
+            // --- محاسبات ---
+
+            // 1. تعداد دام/طیور باقی‌مانده پس از تلفات
+            const finalNumAnimals = numAnimals * (1 - (mortalityRate / 100));
+
+            // 2. هزینه‌ها
+            const totalInitialWeight = numAnimals * initialWeight;
+            const totalPurchaseCost = totalInitialWeight * purchasePricePerKg;
+
+            const totalProjectCost = totalPurchaseCost + feedCostTotal + vetMedCost + laborCost +
+                                      housingEquipCost + transportationCost + otherCosts;
+
+            // 3. درآمد
+            const totalFinalWeight = finalNumAnimals * finalWeight;
+            const totalSaleRevenue = totalFinalWeight * salePricePerKg;
+
+            // 4. سود/زیان خالص
+            const netProfitLoss = totalSaleRevenue - totalProjectCost;
+
+            // --- نمایش نتایج ---
+            document.getElementById('displayAnimalType').textContent = animalType;
+            document.getElementById('displayNumAnimals').textContent = numAnimals.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            document.getElementById('displayDurationDays').textContent = durationDays.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+            document.getElementById('totalInitialWeight').textContent = totalInitialWeight.toLocaleString('fa-IR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('totalPurchaseCost').textContent = totalPurchaseCost.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+            document.getElementById('finalNumAnimals').textContent = finalNumAnimals.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            document.getElementById('totalFinalWeight').textContent = totalFinalWeight.toLocaleString('fa-IR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('totalSaleRevenue').textContent = totalSaleRevenue.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+            document.getElementById('totalProjectCost').textContent = totalProjectCost.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+            const netProfitLossElement = document.getElementById('netProfitLoss');
+            if (netProfitLoss > 0) {
+                netProfitLossElement.className = 'profit';
+                netProfitLossElement.textContent = 'سود: ' + netProfitLoss.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' ریال/تومان';
+            } else if (netProfitLoss < 0) {
+                netProfitLossElement.className = 'loss';
+                netProfitLossElement.textContent = 'زیان: ' + Math.abs(netProfitLoss).toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' ریال/تومان';
+            } else {
+                netProfitLossElement.className = '';
+                netProfitLossElement.textContent = 'نقطه سربه‌سر (سود/زیان صفر): ' + netProfitLoss.toLocaleString('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' ریال/تومان';
+            }
+        });
+  </script>
+</body>
+</html>
